@@ -18,3 +18,16 @@ Note-1:  AWS Credentials Profile (profile = "default") configured on your local 
 $HOME/.aws/credentials
 */
 
+# module local variables
+locals {
+  prefix = "${var.prefix}-${terraform.workspace}"
+  common_tags = {
+    Environment = terraform.workspace
+    Project     = var.project
+    Owner       = var.contact
+    ManagedBy   = "Terraform"
+  }
+}
+
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
