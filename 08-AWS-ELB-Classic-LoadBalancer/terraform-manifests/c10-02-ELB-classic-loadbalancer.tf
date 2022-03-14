@@ -4,7 +4,7 @@ module "elb" {
   version = "3.0.1"
   # version = "2.5.0"
   name = "${local.name}-myelb"
-  subnets         = [
+  subnets = [
     module.vpc.public_subnets[0],
     module.vpc.public_subnets[1]
   ]
@@ -36,7 +36,7 @@ module "elb" {
 
   # ELB attachments
   number_of_instances = var.private_instance_count
-  instances           = [
+  instances = [
     module.ec2_private.id[0],
     module.ec2_private.id[1]
   ]

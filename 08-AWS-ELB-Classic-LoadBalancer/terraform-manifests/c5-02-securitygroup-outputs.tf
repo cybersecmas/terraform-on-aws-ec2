@@ -37,4 +37,3 @@ output "private_sg_group_name" {
   description = "The name of the security group"
   value       = module.private_sg.security_group_name
 }
-
