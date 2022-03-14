@@ -1,7 +1,8 @@
 # Terraform AWS Classic Load Balancer (ELB-CLB)
 module "elb" {
   source  = "terraform-aws-modules/elb/aws"
-  version = "2.5.0"
+  version = "3.0.1"
+  # version = "2.5.0"
   name = "${local.name}-myelb"
   subnets         = [
     module.vpc.public_subnets[0],
