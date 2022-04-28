@@ -1,22 +1,23 @@
 # Terraform AWS Application Load Balancer (ALB)
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
-  version = "5.16.0"
+  version = "6.10.0"
+  # version = "5.16.0"
 
-  name = "${local.name}-alb"
+  name               = "${local.name}-alb"
   load_balancer_type = "application"
-  vpc_id = module.vpc.vpc_id
+  vpc_id             = module.vpc.vpc_id
   subnets = [
     module.vpc.public_subnets[0],
     module.vpc.public_subnets[1]
   ]
-  security_groups = [module.loadbalancer_sg.this_security_group_id]
+  security_groups = [module.loadbalancer_sg.security_group_id]
   # Listeners
   # HTTP Listener - HTTP to HTTPS Redirect
-    http_tcp_listeners = [
+  http_tcp_listeners = [
     {
-      port               = 80
-      protocol           = "HTTP"
+      port        = 80
+      protocol    = "HTTP"
       action_type = "redirect"
       redirect = {
         port        = "443"
@@ -24,7 +25,7 @@ module "alb" {
         status_code = "HTTP_301"
       }
     }
-  ]  
+  ]
   # Target Groups
   target_groups = [
     # App1 Target Group - TG Index = 0
@@ -49,16 +50,16 @@ module "alb" {
       # App1 Target Group - Targets
       targets = {
         my_app1_vm1 = {
-          target_id = module.ec2_private_app1.id[0]
+          target_id = module.ec2_private_app1["one"].id
           port      = 80
         },
         my_app1_vm2 = {
-          target_id = module.ec2_private_app1.id[1]
+          target_id = module.ec2_private_app1["two"].id
           port      = 80
         }
       }
-      tags =local.common_tags # Target Group Tags
-    },  
+      tags = local.common_tags # Target Group Tags
+    },
     # App2 Target Group - TG Index = 1
     {
       name_prefix          = "app2-"
@@ -81,38 +82,38 @@ module "alb" {
       # App2 Target Group - Targets
       targets = {
         my_app2_vm1 = {
-          target_id = module.ec2_private_app2.id[0]
+          target_id = module.ec2_private_app2["one"].id
           port      = 80
         },
         my_app2_vm2 = {
-          target_id = module.ec2_private_app2.id[1]
+          target_id = module.ec2_private_app2["two"].id
           port      = 80
         }
       }
-      tags =local.common_tags # Target Group Tags
-    }  
+      tags = local.common_tags # Target Group Tags
+    }
   ]
 
   # HTTPS Listener
   https_listeners = [
     # HTTPS Listener Index = 0 for HTTPS 443
     {
-      port               = 443
-      protocol           = "HTTPS"
-      certificate_arn    = module.acm.this_acm_certificate_arn
-      action_type = "fixed-response"
+      port            = 443
+      protocol        = "HTTPS"
+      certificate_arn = module.acm.acm_certificate_arn
+      action_type     = "fixed-response"
       fixed_response = {
         content_type = "text/plain"
         message_body = "Fixed Static message - for Root Context"
         status_code  = "200"
       }
-    }, 
+    },
   ]
 
   # HTTPS Listener Rules
   https_listener_rules = [
     # Rule-1: /app1* should go to App1 EC2 Instances
-    { 
+    {
       https_listener_index = 0
       actions = [
         {
@@ -136,7 +137,7 @@ module "alb" {
       conditions = [{
         path_patterns = ["/app2*"]
       }]
-    },    
+    },
   ]
 
   tags = local.common_tags # ALB Tags
