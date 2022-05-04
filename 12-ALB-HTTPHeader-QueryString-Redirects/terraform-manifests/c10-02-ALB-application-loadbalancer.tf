@@ -169,7 +169,7 @@ module "alb" {
         }]
       }]
     },
-    # Rule-4: When Host Header = azure-aks.devopsincloud.com, redirect to https://stacksimplify.com/azure-aks/azure-kubernetes-service-introduction/
+    # Rule-4: When Host Header = azure-aks.cyberitexp.com, redirect to https://stacksimplify.com/azure-aks/azure-kubernetes-service-introduction/
     {
       https_listener_index = 0
       priority             = 4
@@ -182,7 +182,7 @@ module "alb" {
         protocol    = "HTTPS"
       }]
       conditions = [{
-        host_headers = ["azure-aks101.devopsincloud.com"]
+        host_headers = ["azure-aks101.cyberitexp.com"]
       }]
     },
   ]
