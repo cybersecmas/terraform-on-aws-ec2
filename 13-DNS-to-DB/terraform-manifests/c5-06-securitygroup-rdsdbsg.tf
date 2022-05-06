@@ -1,8 +1,8 @@
 # Security Group for AWS RDS DB
 module "rdsdb_sg" {
   source  = "terraform-aws-modules/security-group/aws"
-  #version = "3.18.0"
-  version = "4.0.0"
+  version = "4.9.0"
+  # version = "3.18.0"
 
   name        = "rdsdb-sg"
   description = "Access to MySQL DB for entire VPC CIDR Block"
@@ -19,6 +19,6 @@ module "rdsdb_sg" {
     },
   ]
   # Egress Rule - all-all open
-  egress_rules = ["all-all"]  
-  tags = local.common_tags  
+  egress_rules = ["all-all"]
+  tags         = local.common_tags
 }
