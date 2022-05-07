@@ -13,8 +13,12 @@ module "rdsdb" {
   port     = 3306
 
 
-  multi_az               = true
-  subnet_ids             = module.vpc.database_subnets
+  multi_az = true
+
+  # hungtd fixed InvalidSubnet error
+  # subnet_ids             = module.vpc.database_subnets
+  db_subnet_group_name = module.vpc.database_subnet_group_name
+
   vpc_security_group_ids = [module.rdsdb_sg.security_group_id]
 
   # All available versions: http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_MySQL.html#MySQL.Concepts.VersionMgmt
