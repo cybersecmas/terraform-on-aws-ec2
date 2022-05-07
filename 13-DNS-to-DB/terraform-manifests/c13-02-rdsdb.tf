@@ -12,10 +12,13 @@ module "rdsdb" {
   password = var.db_password
   port     = 3306
 
+  # hungtd fixed password error
+  create_random_password = false
 
   multi_az = true
 
   # hungtd fixed InvalidSubnet error
+  # It seems that we just need to specify the subnet_group that was created by vpc module
   # subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name = module.vpc.database_subnet_group_name
 
