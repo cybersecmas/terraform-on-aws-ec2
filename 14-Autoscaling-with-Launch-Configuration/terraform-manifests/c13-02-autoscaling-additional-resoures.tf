@@ -12,5 +12,35 @@ resource "aws_iam_service_linked_role" "autoscaling" {
 
 # Output AWS IAM Service Linked Role
 output "service_linked_role_arn" {
-    value   = aws_iam_service_linked_role.autoscaling.arn
+  value = aws_iam_service_linked_role.autoscaling.arn
+}
+
+
+# -----------------------------------------------------------
+# hungtd defined more resources here
+# -----------------------------------------------------------
+
+resource "aws_iam_instance_profile" "ssm" {
+  name = "complete-${local.name}"
+  role = aws_iam_role.ssm.name
+  tags = local.tags
+}
+
+resource "aws_iam_role" "ssm" {
+  name = "complete-${local.name}"
+  tags = local.tags
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+        Effect = "Allow",
+        Sid    = ""
+      }
+    ]
+  })
 }

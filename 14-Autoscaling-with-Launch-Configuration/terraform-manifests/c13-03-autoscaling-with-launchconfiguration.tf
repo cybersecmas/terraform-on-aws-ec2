@@ -1,22 +1,23 @@
 # Autoscaling with Launch Configuration - Both created at a time
 module "autoscaling" {
   source  = "terraform-aws-modules/autoscaling/aws"
-  version = "4.1.0"
+  version = "6.3.0"
+  # version = "4.1.0"
 
   # Autoscaling group
   name            = "${local.name}-myasg1"
   use_name_prefix = false
 
-  min_size                  = 2
-  max_size                  = 10
-  desired_capacity          = 2
+  min_size         = 2
+  max_size         = 10
+  desired_capacity = 2
   #desired_capacity          = 3  # Changed for testing Instance Refresh as part of Step-10 
   wait_for_capacity_timeout = 0
   health_check_type         = "EC2"
   vpc_zone_identifier       = module.vpc.private_subnets
   service_linked_role_arn   = aws_iam_service_linked_role.autoscaling.arn
   # Associate ALB with ASG
-  target_group_arns         = module.alb.target_group_arns
+  target_group_arns = module.alb.target_group_arns
 
   # ASG Lifecycle Hooks
   initial_lifecycle_hooks = [
@@ -63,7 +64,7 @@ module "autoscaling" {
   associate_public_ip_address = false
 
   # Add Spot Instances, which creates Spot Requests to get instances at the price listed (Optional argument)
-  spot_price        = "0.014"
+  spot_price = "0.014"
   #spot_price        = "0.016" # Change for Instance Refresh test
 
   ebs_block_device = [
@@ -91,5 +92,5 @@ module "autoscaling" {
     http_put_response_hop_limit = 32
   }
 
-  tags        = local.asg_tags 
+  tags = local.asg_tags
 }
