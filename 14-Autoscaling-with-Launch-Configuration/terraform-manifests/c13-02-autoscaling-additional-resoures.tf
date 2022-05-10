@@ -23,12 +23,12 @@ output "service_linked_role_arn" {
 resource "aws_iam_instance_profile" "ssm" {
   name = "complete-${local.name}"
   role = aws_iam_role.ssm.name
-  tags = local.tags
+  tags = local.common_tags # need to change?
 }
 
 resource "aws_iam_role" "ssm" {
   name = "complete-${local.name}"
-  tags = local.tags
+  tags = local.common_tags # need to change?
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
