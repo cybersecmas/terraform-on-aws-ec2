@@ -1,14 +1,13 @@
 module "autoscaling" {
-  # module "complete" {
   source  = "terraform-aws-modules/autoscaling/aws"
   version = "6.3.0"
 
   # Autoscaling group
-  name            = "${local.name}-myasg1"
+  name            = "${local.name}-my-asg"
   use_name_prefix = false
   instance_name   = "${var.environment}-my-instance"
 
-  ignore_desired_capacity_changes = true # need to change?
+  # ignore_desired_capacity_changes = true # need to change?
 
   min_size                  = 2
   max_size                  = 4
@@ -123,25 +122,25 @@ module "autoscaling" {
     instance_metadata_tags      = "enabled"
   }
 
-  network_interfaces = [
-    {
-      delete_on_termination = true
-      description           = "eth0"
-      device_index          = 0
-      security_groups       = [module.private_sg.security_group_id]
-    },
-    {
-      delete_on_termination = true
-      description           = "eth1"
-      device_index          = 1
-      security_groups       = [module.private_sg.security_group_id]
-    }
-  ]
+  # network_interfaces = [
+  #   {
+  #     delete_on_termination = true
+  #     description           = "eth0"
+  #     device_index          = 0
+  #     security_groups       = [module.private_sg.security_group_id]
+  #   },
+  #   {
+  #     delete_on_termination = true
+  #     description           = "eth1"
+  #     device_index          = 1
+  #     security_groups       = [module.private_sg.security_group_id]
+  #   }
+  # ]
 
-  placement = {
-    # availability_zone = "${local.region}b"
-    availability_zone = "${var.aws_region}b" # need to change? This must be reviewed!!
-  }
+  # placement = {
+  #   # availability_zone = "${local.region}b"
+  #   availability_zone = "${var.aws_region}b" # need to change? This must be reviewed!!
+  # }
 
   tag_specifications = [
     {
