@@ -6,7 +6,7 @@ module "autoscaling" {
   # Autoscaling group
   name            = "${local.name}-myasg1"
   use_name_prefix = false
-  instance_name   = "my-instance-name" # need to change?
+  instance_name   = "${var.environment}-my-instance"
 
   ignore_desired_capacity_changes = true # need to change?
 
@@ -50,14 +50,14 @@ module "autoscaling" {
   }
 
   # Launch template
-  launch_template_name        = "complete-${local.name}"
+  launch_template_name        = "${local.name}-complete"
   launch_template_description = "Complete launch template example"
   update_default_version      = true
 
   image_id          = data.aws_ami.amzlinux2.id
   instance_type     = var.instance_type
   key_name          = var.instance_keypair
-  user_data         = file("${path.module}/app1-install.sh")
+  user_data         = filebase64("${path.module}/app1-install.sh")
   ebs_optimized     = true
   enable_monitoring = true
 
@@ -140,7 +140,7 @@ module "autoscaling" {
 
   placement = {
     # availability_zone = "${local.region}b"
-    availability_zone = var.aws_region # need to change? This must be reviewed!!
+    availability_zone = "${var.aws_region}b" # need to change? This must be reviewed!!
   }
 
   tag_specifications = [
