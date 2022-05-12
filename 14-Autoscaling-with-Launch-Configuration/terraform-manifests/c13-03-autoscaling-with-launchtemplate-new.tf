@@ -193,18 +193,19 @@ module "autoscaling" {
         target_value = 50.0
       }
     },
-    # alb_target_requests_greater_than_yy = {
-    #   policy_type               = "TargetTrackingScaling" # Important Note: The policy type, either "SimpleScaling", "StepScaling" or "TargetTrackingScaling". If this value isn't provided, AWS will default to "SimpleScaling."    
-    #   estimated_instance_warmup = 120                     # defaults to ASG default cooldown 300 seconds if not set  
-    #   # Number of requests > 10 completed per target in an Application Load Balancer target group.
-    #   target_tracking_configuration = {
-    #     predefined_metric_specification = {
-    #       predefined_metric_type = "ALBRequestCountPerTarget"
-    #       resource_label         = "${module.alb.lb_arn_suffix}/${module.alb.target_group_arn_suffixes[0]}"
-    #     }
-    #     target_value = 10.0
-    #   }
-    # },
+    alb-target-requests-greater-than-yy = {
+      policy_type               = "TargetTrackingScaling" # Important Note: The policy type, either "SimpleScaling", "StepScaling" or "TargetTrackingScaling". If this value isn't provided, AWS will default to "SimpleScaling."    
+      estimated_instance_warmup = 120                     # defaults to ASG default cooldown 300 seconds if not set  
+      # Number of requests > 10 completed per target in an Application Load Balancer target group.
+      target_tracking_configuration = {
+        predefined_metric_specification = {
+          predefined_metric_type = "ALBRequestCountPerTarget"
+          resource_label         = "${module.alb.lb_arn_suffix}/${module.alb.target_group_arn_suffixes[0]}"
+          # resource_label         = "something"
+        }
+        target_value = 10.0
+      }
+    },
     predictive-scaling = {
       policy_type = "PredictiveScaling"
       predictive_scaling_configuration = {
