@@ -64,8 +64,9 @@ module "autoscaling" {
   enable_monitoring = true
 
   iam_instance_profile_arn = aws_iam_instance_profile.ssm.arn
-  # # Security group is set on the ENIs below
-  # security_groups          = [module.asg_sg.security_group_id]
+
+  # Security group is set on the ENIs below
+  security_groups = [module.private_sg.security_group_id]
 
   target_group_arns = module.alb.target_group_arns
 
