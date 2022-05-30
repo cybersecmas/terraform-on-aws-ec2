@@ -1,6 +1,7 @@
 module "autoscaling" {
-  source  = "terraform-aws-modules/autoscaling/aws"
-  version = "6.3.0"
+  depends_on = [module.vpc]
+  source     = "terraform-aws-modules/autoscaling/aws"
+  version    = "6.4.0"
 
   # Autoscaling group
   name            = "${local.name}-my-asg"
@@ -61,8 +62,9 @@ module "autoscaling" {
   enable_monitoring = true
 
   iam_instance_profile_arn = aws_iam_instance_profile.ssm.arn
-  # # Security group is set on the ENIs below
-  # security_groups          = [module.asg_sg.security_group_id]
+  # Security group is set on the ENIs below
+  # security_groups = [module.asg_sg.security_group_id]
+  # security_groups = [module.private_sg.security_group_id]
 
   target_group_arns = module.alb.target_group_arns
 
@@ -122,20 +124,21 @@ module "autoscaling" {
     instance_metadata_tags      = "enabled"
   }
 
-  # network_interfaces = [
-  #   {
-  #     delete_on_termination = true
-  #     description           = "eth0"
-  #     device_index          = 0
-  #     security_groups       = [module.private_sg.security_group_id]
-  #   },
-  #   {
-  #     delete_on_termination = true
-  #     description           = "eth1"
-  #     device_index          = 1
-  #     security_groups       = [module.private_sg.security_group_id]
-  #   }
-  # ]
+  network_interfaces = [
+    {
+      delete_on_termination = true
+      description           = "eth0"
+      device_index          = 0
+      security_groups       = [module.private_sg.security_group_id]
+    }
+    # },
+    # {
+    #   delete_on_termination = true
+    #   description           = "eth1"
+    #   device_index          = 1
+    #   security_groups       = [module.private_sg.security_group_id]
+    # }
+  ]
 
   # placement = {
   #   # availability_zone = "${local.region}b"
@@ -193,19 +196,21 @@ module "autoscaling" {
         target_value = 50.0
       }
     },
-    alb-target-requests-greater-than-yy = {
-      policy_type               = "TargetTrackingScaling" # Important Note: The policy type, either "SimpleScaling", "StepScaling" or "TargetTrackingScaling". If this value isn't provided, AWS will default to "SimpleScaling."    
-      estimated_instance_warmup = 120                     # defaults to ASG default cooldown 300 seconds if not set  
-      # Number of requests > 10 completed per target in an Application Load Balancer target group.
-      target_tracking_configuration = {
-        predefined_metric_specification = {
-          predefined_metric_type = "ALBRequestCountPerTarget"
-          resource_label         = "${module.alb.lb_arn_suffix}/${module.alb.target_group_arn_suffixes[0]}"
-          # resource_label         = "something"
-        }
-        target_value = 10.0
-      }
-    },
+    # Must temporarily comment this
+    # https://github.com/terraform-aws-modules/terraform-aws-autoscaling/issues/192
+    # alb-target-requests-greater-than-yy = {
+    #   policy_type               = "TargetTrackingScaling" # Important Note: The policy type, either "SimpleScaling", "StepScaling" or "TargetTrackingScaling". If this value isn't provided, AWS will default to "SimpleScaling."    
+    #   estimated_instance_warmup = 120                     # defaults to ASG default cooldown 300 seconds if not set  
+    #   # Number of requests > 10 completed per target in an Application Load Balancer target group.
+    #   target_tracking_configuration = {
+    #     predefined_metric_specification = {
+    #       predefined_metric_type = "ALBRequestCountPerTarget"
+    #       resource_label         = "${module.alb.lb_arn_suffix}/${module.alb.target_group_arn_suffixes[0]}"
+    #       # resource_label         = "something"
+    #     }
+    #     target_value = 10.0
+    #   }
+    # },
     predictive-scaling = {
       policy_type = "PredictiveScaling"
       predictive_scaling_configuration = {
