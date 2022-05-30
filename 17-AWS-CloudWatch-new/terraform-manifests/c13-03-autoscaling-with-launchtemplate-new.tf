@@ -2,8 +2,9 @@
 # https://github.com/terraform-aws-modules/terraform-aws-autoscaling/blob/v6.3.0/examples/complete/main.tf
 
 module "autoscaling" {
-  source  = "terraform-aws-modules/autoscaling/aws"
-  version = "6.3.0"
+  depends_on = [module.vpc]
+  source     = "terraform-aws-modules/autoscaling/aws"
+  version    = "6.4.0"
 
   # Autoscaling group
   name            = "${local.name}-my-asg"
@@ -196,6 +197,8 @@ module "autoscaling" {
         target_value = 50.0
       }
     },
+    # Must temporarily comment this
+    # https://github.com/terraform-aws-modules/terraform-aws-autoscaling/issues/192
     # alb-target-requests-greater-than-yy = {
     #   policy_type               = "TargetTrackingScaling" # Important Note: The policy type, either "SimpleScaling", "StepScaling" or "TargetTrackingScaling". If this value isn't provided, AWS will default to "SimpleScaling."    
     #   estimated_instance_warmup = 120                     # defaults to ASG default cooldown 300 seconds if not set  
